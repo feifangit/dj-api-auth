@@ -1,0 +1,7 @@
+include LICENSE
+include README.rst
+recursive-include djapiauth/management *.py
+recursive-include djapiauth/migrations *.py
+recursive-include example *
+prune *.pyc
+prune *.sw*
