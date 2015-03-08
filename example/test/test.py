@@ -13,7 +13,7 @@ import base64
 from urllib2 import HTTPError
 
 API_KEY = "483a570a"
-SEC_KEY = "d7228d70cd7f456d9bfdc35ed8fee375x"
+SEC_KEY = "d7228d70cd7f456d9bfdc35ed8fee375"
 URL = "http://localhost:8000"
 
 logging.basicConfig()
