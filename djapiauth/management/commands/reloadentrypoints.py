@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 urldisplayname = " ".join(prefixname + [u._regex,])
 
                 newDiscovered.add(urldisplayname)
-                obj, bCreated = APIEntryPoint.objects.update_or_create(name=urldisplayname)
+                obj, bCreated = APIEntryPoint.objects.get_or_create(name=urldisplayname)
                 obj.pattern = cPickle.dumps(prefixre + [u.regex])
                 obj.save()
 
