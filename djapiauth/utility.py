@@ -6,8 +6,6 @@ from django.core.urlresolvers import RegexURLResolver
 from django.conf.urls import url
 from django.core.urlresolvers import RegexURLPattern
 
-from .auth import api_auth
-
 
 def is_aware(value):
     """
@@ -79,6 +77,7 @@ def reg_api(regex, viewname, *args, **kwargs):  # api_auth added in view, make r
 
 def reg_n_protect_api(regex, viewname, views, *args, **kwargs):
     """reuse an existing view, must provide views"""
+    from .auth import api_auth
     if not isinstance(viewname, (list, tuple)):  # not include
         urlobj = url(regex, api_auth(getattr(views, viewname)))
         setattr(urlobj, "_protected_api", True)
