@@ -138,5 +138,5 @@ Thanks
 TODO
 -----
 - performance improvement for entry point matching in API permission check.
-- easily solution to register API
+- easier solution to register API
 
