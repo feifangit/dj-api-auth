@@ -112,7 +112,7 @@ DIY:
 
 Thanks
 ------
-
+Thanks for the Javascript test code from Neil Chen (neil.chen.nj@gmail.com)
 
 TODO
 -----
