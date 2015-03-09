@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='dj-api-auth',
-    version='0.2',
+    version='0.3',
     packages=['djapiauth'],
     include_package_data=True,
     license='GPL v2.0',
