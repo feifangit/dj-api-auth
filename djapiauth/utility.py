@@ -1,10 +1,11 @@
 import json
 import datetime
 import decimal
+from django.utils import six
 from django.http import HttpResponse
 from django.core.urlresolvers import RegexURLResolver
 from django.conf.urls import url
-from django.core.urlresolvers import RegexURLPattern
+from django.utils.module_loading import import_by_path
 
 
 def is_aware(value):
@@ -67,27 +68,22 @@ class JsonResponse(HttpResponse):
         super(JsonResponse, self).__init__(content=data, **kwargs)
 
 
-# neither reg_api nor reg_n_protect_api take effect on include(...)
-def reg_api(regex, viewname, *args, **kwargs):  # api_auth added in view, make registration only
-    urlobj = url(regex, viewname, *args, **kwargs)
-    if isinstance(urlobj, RegexURLPattern):
-        setattr(urlobj, "_protected_api", True)
-    return urlobj
-
-
-def reg_n_protect_api(regex, viewname, views, *args, **kwargs):
-    """reuse an existing view, must provide views"""
-    from .auth import api_auth
-    if not isinstance(viewname, (list, tuple)):  # not include
-        urlobj = url(regex, api_auth(getattr(views, viewname)))
-        setattr(urlobj, "_protected_api", True)
-        return urlobj
-    return url(regex, viewname, *args, **kwargs)  # ignore include
+def url_with_auth(regex, view, kwargs=None, name=None, prefix=''):
+    """
+    if view is string based, must be a full path
+    """
+    from djapiauth.auth import api_auth
+    if isinstance(view, six.string_types):  # view is a string, must be full path
+        return url(regex, api_auth(import_by_path(prefix + "." + view if prefix else view)))
+    elif isinstance(view, (list, tuple)):  # include
+        return url(regex, view, name, prefix, **kwargs)
+    else:  # view is an object
+        return url(regex, api_auth(view))
 
 
 def is_protected_api(u):
     """ if a url is registered as protected """
-    return hasattr(u, "_protected_api")
+    return u.callback and getattr(u.callback, "__djapiauth__", False)
 
 
 def traverse_urls(urlpattern, prefixre=[], prefixname=[], patternFunc=None, resolverFunc=None):

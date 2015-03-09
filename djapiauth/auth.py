@@ -64,5 +64,6 @@ def api_auth(function=None):
             except Exception as e:
                 return JsonResponse({"error": str(e)}, status=403)
             return func(request, *args, **kwargs)
+        setattr(wrapped, '__djapiauth__', True)
         return wrapped
     return real_decorator if not function else real_decorator(function)

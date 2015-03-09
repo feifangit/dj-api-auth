@@ -15,7 +15,7 @@ Features
 2. Each API key can be associated with a set of API
 3. API can be associated with user,  your legacy code with ``request.user`` underneath can work smoothly with ``dj-api-auth``
 4. Add auth by simply put a decorator on your view.
-5. Provide utility functions that can help you register APIs as assignable. Both browser-oriented views(reusing) and dedicated API-oriented views can be marked as assignable.
+5. Discover API with auth enabled automatically, these auth-required APIs will display in assignable list when creating API keys
 6. A Django command to scan and update API information to database.
 
 
@@ -55,7 +55,13 @@ If you have ``admin`` enabled for your project, you can find these features in `
 
 Add auth for views
 ----------------------------
-- For legacy views, we can add the auth and registration together in URL dispatching file, usually the ``urls.py``, see **Register APIs** for detail.
+- For legacy views, we provide utility function ``url_with_auth`` in ``djapiauth.utility``
+
+.. code-block:: python
+	
+	# add auth for a browser-oriented view
+	url_with_auth(r'^hello/$', 'djapp.views.index'),
+	#...
 
 - For API views, simply add ``@api_auth`` for the view after ``from djapiauth.auth import api_auth``
 
@@ -66,36 +72,9 @@ Add auth for views
 		return JsonResponse({"user": "feifan", "boss": "lidan zhou"})
 
 
-
-Register APIs
--------------
-In order to manage APIs those can be assigned to an API key, we have to mark them first.
-We may have two cases:
-
-- For legacy views, we adds auth and register API in URL dispatching file at same time by utility function ``reg_n_protect_api``
-- For views dedicate for API-style access, use utility function ``reg_api`` to finish the registration
-
-
-.. code-block:: python
-
-	# e.g.
-	# 1, add auth for prevapp.views.myview, assign new url myapi/, of course, register the API
-	# 2, since api_whoami have api_auth decorator in views.py, we only register here, 
-	#    and assign url whoami/ for api.myapi.api_whoami
-
-	import prevapp.views as app1views  # legacy views
-	from djapiauth.utility import reg_n_protect_api, reg_api
-
-	urlpatterns = patterns('api.myapi',
-	                       reg_n_protect_api(r'^myapi/$', 'myview', views=app1views),  # 1
-	                       reg_api(r'^whoami/$', 'api_whoami'),  # 2
-	                       # ....
-	                       )
-
-
-Scan registered API
+Scan API
 -------------------
-we have a Django command ``reloadentrypoints`` to help you collect all registered API entry points to database.
+we have a Django command ``reloadentrypoints`` to help you to collect and save all auth-required APIs to database.
 
 
 Error messages
@@ -138,5 +117,4 @@ Thanks
 TODO
 -----
 - performance improvement for entry point matching in API permission check.
-- easier solution to register API
 
