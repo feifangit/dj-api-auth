@@ -16,12 +16,20 @@ class APIEntryPoint(models.Model):
         return unicode(self.name)
 
 
+def gen_apikey():  # django 1.7 can not serilize lambda funciton
+    return uuid.uuid4().hex[:8]
+
+
+def gen_seckey():  # django 1.7 can not serilize lambda funciton
+    return uuid.uuid4().hex
+
+
 class APIKeys(models.Model):
     class Meta:
         verbose_name = "Credential"
 
-    apikey = models.CharField(max_length=50, default=lambda: uuid.uuid4().hex[:8], unique=True)
-    seckey = models.CharField(max_length=50, default=lambda: uuid.uuid4().hex)
+    apikey = models.CharField(max_length=50, default=gen_apikey, unique=True)
+    seckey = models.CharField(max_length=50, default=gen_seckey)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL)
     apis = models.ManyToManyField(APIEntryPoint, blank=True, null=True, help_text="accessible api entries")
     note = models.CharField(max_length=80, null=True, blank=True)
