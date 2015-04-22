@@ -58,3 +58,7 @@ apiclient.send_request("/api/hello/");
 
 console.log("send to /api/goodbye/");
 apiclient.send_request("/api/goodbye/");
+
+
+console.log("send to /api/classbased1/");
+apiclient.send_request("/api/classbased1/");
