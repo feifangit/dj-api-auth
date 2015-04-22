@@ -25,7 +25,7 @@ How it works
 2. Client put API key and current UNIX time as ``apikey`` and ``timestemp`` in requestURL
 3. Client also generate a ``signature`` by calculate a SHA256 value on the whole URL(without ``signature``) by its known SEC key.
 4. Server side will verify 
-	- is ``timestamp`` from client in reasonable rift compare to server time.
+	- is ``timestamp`` from client in reasonable drift compare to server time.
 	- is ``apikey`` from client exists
 	- is the API client trying to access allowed for the ``apikey``
 	- compare the ``signature`` with the one calculated on server side by same algorithm
@@ -39,8 +39,8 @@ Add to your project
 
 2. There are two optional settings 
 
-- ``API_AUTH_ALLOWED_TIME_RIFT``
-	- **optional**, set the allowed time rift between server time and the ``timestamp`` parameter in coming URL.
+- ``API_AUTH_ALLOWED_TIME_DRIFT``
+	- **optional**, set the allowed time drift between server time and the ``timestamp`` parameter in coming URL.
 	- **format** : integer, unit: second
 	- **default** : 300, (5 minutes) 
 
@@ -80,7 +80,7 @@ we have a Django command ``reloadentrypoints`` to help you to collect and save a
 Error messages
 ----------------------
 - ``parameter missing``, any of ``apikey``, ``timestamp`` or ``signature`` missing in URL
-- ``timestamp rift xxx``, check your local time and server time. You can implement an API to return server time
+- ``time drift xxx``, check your local time and server time. You can implement an API to return server time
 - ``entry point not allowed for the API key``, check the assigned API for this API key in ``admin`` site or anywhere else you manage API keys
 - ``signature error``, obviously, signature mismatch
 

@@ -11,7 +11,7 @@ except ImportError:
     from .utility import JsonResponse
 
 from .models import APIKeys
-from . import API_AUTH_ALLOWED_TIME_RIFT
+from . import API_AUTH_ALLOWED_TIME_DRIFT
 
 
 def api_auth_encrypt(sk, msg):
@@ -32,8 +32,8 @@ def _auth_url(url):
         raise Exception("parameter missing")
 
     # time stamp check, avoid replay attack
-    if abs(time.time() - float(ts[0])) > API_AUTH_ALLOWED_TIME_RIFT:
-        raise Exception("timestamp rift > %s sec" % API_AUTH_ALLOWED_TIME_RIFT)
+    if abs(time.time() - float(ts[0])) > API_AUTH_ALLOWED_TIME_DRIFT:
+        raise Exception("time drift > %s sec" % API_AUTH_ALLOWED_TIME_DRIFT)
 
     user, sk = APIKeys.permission_check(ak[0], url_parts.path.lstrip("/"))
     if not (user and sk):  # user may be none
