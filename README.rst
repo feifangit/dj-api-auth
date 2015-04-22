@@ -53,8 +53,8 @@ Generate/Manage API and SEC key
 -------------------------------
 If you have ``admin`` enabled for your project, you can find these features in ``admin`` site. Otherwise, you can import forms from ``djapiauth.forms`` or write your own form based on models in ``djapiauth.models``
 
-Add auth for views
-----------------------------
+Add auth for function-based views
+----------------------------------
 - For legacy views, we provide utility function ``url_with_auth`` in ``djapiauth.utility``
 
 .. code-block:: python
@@ -70,6 +70,32 @@ Add auth for views
 	@api_auth
 	def api_whoami(request):
 		return JsonResponse({"user": "feifan", "boss": "lidan zhou"})
+
+Add auth for class-based views
+-------------------------------
+For class-baesd views, simply add ``djapiauth.utility.AuthMixin`` as a base class to get auth protection.
+
+.. code-block:: python
+
+	from djapiauth.utility import AuthMixin
+	class ProtectedView(AuthMixin,View):
+	    def get(self, request):
+	        return HttpResponse('hello, auth')
+
+
+	class UnprotectedView(AuthMixin,View):
+	    api_auth = False
+	    def get(self, request):
+	        return HttpResponse('hello, no auth needed')
+
+
+and add URL mapping in ``urls.py``
+
+.. code-block:: python
+
+	...
+	url(r'^classbased1/$', apis.ProtectedView.as_view())
+	...
 
 
 Scan API

@@ -110,3 +110,17 @@ def traverse_urls(urlpattern, prefixre=[], prefixname=[], patternFunc=None, reso
         else:
             if patternFunc:
                 patternFunc(u, prefixre, prefixname)
+
+
+class AuthMixin(object):
+    """
+    for class-based views
+    derived classed can turn auth off by set api_auth to False
+    """
+    api_auth = True
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        from djapiauth.auth import api_auth
+        view = super(AuthMixin, cls).as_view(**initkwargs)
+        return api_auth(view) if cls.api_auth else view
