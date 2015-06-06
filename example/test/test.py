@@ -39,7 +39,7 @@ class APIClient(object):
         dig = hmac.new(self._sk, msg, digestmod=hashlib.sha256).digest()
         return base64.b64encode(dig).decode()
 
-    def _sign_url(self, _url):
+    def _sign_url(self, _url, data):
         url = ("/" + _url) if not _url.startswith("/") else _url
         url_parts = urlparse.urlparse(url)
         qs = urlparse.parse_qs(url_parts.query)
@@ -47,12 +47,12 @@ class APIClient(object):
         qs["apikey"] = self._ak
         new_qs = urllib.urlencode(qs, True)
         tmpurl = urlparse.urlunparse(list(url_parts[0:4]) + [new_qs] + list(url_parts[5:]))
-        final_url = tmpurl + "&signature=" + self._sign_msg(tmpurl)  # sign url
+        final_url = tmpurl + "&signature=" + self._sign_msg(tmpurl+data if data else tmpurl)  # sign url
         return final_url
 
     def send_request(self, url, data=None, datafunc=json.loads):
         try:
-            resp = self.opener.open(urlparse.urljoin(self._baseurl, self._sign_url(url)), data)
+            resp = self.opener.open(urlparse.urljoin(self._baseurl, self._sign_url(url, data)), data)
             return resp.code, datafunc(resp.read()) if datafunc else resp.read()
         except HTTPError as e:
             # logger.debug(e.fp.read() if e.fp else e.msg)
@@ -63,17 +63,27 @@ apiclient = APIClient(API_KEY, SEC_KEY, URL)
 
 
 
-print "\n1 send to /api/hello/"
+print "\n1 send GET to /api/hello/"
 httpcode, httpresp = apiclient.send_request("/api/hello/", datafunc=None)
 print httpresp
 
-print "\n2 send to /api/goodbye/"
+
+print "\n2.1 send GET to /api/goodbye/"
 httpcode, httpresp = apiclient.send_request("/api/goodbye/")
 print httpresp
 
-print "\n3 send to /api/classbased1/"
+print "\n2.2 send POST to /api/goodbye/"
+httpcode, httpresp = apiclient.send_request("/api/goodbye/", data="world")
+print httpresp
+
+print "\n3.1 send GET to /api/classbased1/"
 httpcode, httpresp = apiclient.send_request("/api/classbased1/")
 print httpresp
+
+print "\n3.2 send GET to /api/classbased1/"
+httpcode, httpresp = apiclient.send_request("/api/classbased1/", data="world")
+print httpresp
+
 
 print "\n4 send to /api/classbased2/ without auth"
 print urllib.urlopen(URL+"/api/classbased2/").read()

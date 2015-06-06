@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import RegexURLResolver
 from django.conf.urls import url
 from django.utils.module_loading import import_by_path
+from django.views.decorators.csrf import csrf_exempt
 
 
 def is_aware(value):
@@ -123,4 +124,5 @@ class AuthMixin(object):
     def as_view(cls, **initkwargs):
         from djapiauth.auth import api_auth
         view = super(AuthMixin, cls).as_view(**initkwargs)
-        return api_auth(view) if cls.api_auth else view
+        view = api_auth(view) if cls.api_auth else view
+        return csrf_exempt(view) if "post" in cls.http_method_names else view

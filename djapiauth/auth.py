@@ -19,7 +19,7 @@ def api_auth_encrypt(sk, msg):
     return base64.b64encode(dig).decode()
 
 
-def _auth_url(url):
+def _auth_url(url, body):
     url_parts = urlparse.urlparse(url)
     qs = urlparse.parse_qs(url_parts.query)  # dict, no sequence, for info query only
     sign = qs.get("signature", None)
@@ -40,7 +40,7 @@ def _auth_url(url):
         raise Exception("entry point not allowed for the API key")
 
     orgiurl = urlparse.urlunparse(list(url_parts[0:4]) + [urllib.urlencode(qsl, True), ] + list(url_parts[5:]))
-    if sign[0] != urllib.unquote_plus(api_auth_encrypt(sk, orgiurl)):
+    if sign[0] != urllib.unquote_plus(api_auth_encrypt(sk, orgiurl+body if body else orgiurl)):
         raise Exception("signature error")
     return user
 
@@ -59,7 +59,7 @@ def api_auth(function=None):
     def real_decorator(func):
         def wrapped(request, *args, **kwargs):
             try:
-                user = _auth_url(request.get_full_path())
+                user = _auth_url(request.get_full_path(), request.body)
                 request.user = user  # put user object in request
             except Exception as e:
                 return JsonResponse({"error": str(e)}, status=403)
