@@ -2,8 +2,8 @@ import json
 from django.http import HttpResponse
 from django.views.generic import View
 
-from djapiauth.auth import api_auth
-from djapiauth.utility import AuthMixin
+from djapiauth import api_auth
+from djapiauth import AuthMixin
 
 @api_auth
 def apicall(request):

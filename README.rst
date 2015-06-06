@@ -55,7 +55,7 @@ If you have ``admin`` enabled for your project, you can find these features in `
 
 Add auth for function-based views
 ----------------------------------
-- For legacy views, we provide utility function ``url_with_auth`` in ``djapiauth.utility``
+- For legacy views, we provide utility function ``url_with_auth`` in ``djapiauth``
 
 .. code-block:: python
 	
@@ -63,7 +63,7 @@ Add auth for function-based views
 	url_with_auth(r'^hello/$', 'djapp.views.index'),
 	#...
 
-- For API views, simply add ``@api_auth`` for the view after ``from djapiauth.auth import api_auth``
+- For API views, simply add ``@api_auth`` for the view after ``from djapiauth import api_auth``
 
 .. code-block:: python
 
@@ -77,7 +77,7 @@ For class-baesd views, simply add ``djapiauth.utility.AuthMixin`` as a base clas
 
 .. code-block:: python
 
-	from djapiauth.utility import AuthMixin
+	from djapiauth import AuthMixin
 	class ProtectedView(AuthMixin,View):
 	    def get(self, request):
 	        return HttpResponse('hello, auth')

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from djapiauth.utility import url_with_auth
+from djapiauth import url_with_auth
 import apis
 
 urlpatterns = patterns('',
