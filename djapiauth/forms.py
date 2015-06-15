@@ -11,7 +11,7 @@ def get_api_key_form(userfilter={}):
     class APIKeyForm(ModelForm):
         class Meta:
             model = APIKeys
-            exclude = ()
+            exclude = ("apitree",)
         user = forms.ModelChoiceField(queryset=get_user_model().objects.filter(**userfilter),
                                       required=True,)
     return APIKeyForm
