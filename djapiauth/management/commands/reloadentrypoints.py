@@ -2,11 +2,10 @@
 import cPickle
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.module_loading import import_by_path
-
-from djapiauth.models import APIEntryPoint
 from django.conf import settings
 
-from djapiauth.utility import is_protected_api, traverse_urls
+from ...models import APIEntryPoint
+from ...utility import is_protected_api, traverse_urls
 
 rooturl = import_by_path(settings.ROOT_URLCONF+".urlpatterns")
 

@@ -140,7 +140,3 @@ Thanks
 ------
 Thanks for the Javascript test code from Neil Chen (neil.chen.nj@gmail.com)
 
-TODO
------
-- performance improvement for entry point matching in API permission check.
-
