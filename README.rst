@@ -100,7 +100,20 @@ and add URL mapping in ``urls.py``
 
 Scan API
 -------------------
-we have a Django command ``reloadentrypoints`` to help you to collect and save all auth-required APIs to database.
+There's a Django command ``reloadentrypoints`` to help you to collect and save all auth-required APIs to database.
+
+
+API Key and associate API set
+-------------------------------
+since version ``0.8``, I start using a tree-alike structure to speed up matching incoming URLs.
+
+when you upgrade from previous versions, you should run following commands to expand database fields and build matching tree for each API key.
+
+.. code-block:: 
+
+	python manage.py migrate
+	python manage.py repairapikeys
+
 
 
 Error messages
