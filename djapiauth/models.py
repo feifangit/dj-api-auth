@@ -49,7 +49,7 @@ class APIEntryPoint(models.Model):
     class Meta:
         verbose_name = "Entry point"
     name = models.CharField(max_length=100, unique=True)
-    pattern = models.CharField(max_length=100)  # cPickle.dumps(<compiled RE>)
+    pattern = models.CharField(max_length=300)  # cPickle.dumps(<compiled RE>)
 
     def __unicode__(self):
         return unicode(self.name)
