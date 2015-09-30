@@ -16,5 +16,8 @@ VERSION = tuple(map(int, __version__.split('.')))
 
 
 # exposed functions and classes
-from .utility import AuthMixin, url_with_auth
-from .auth import api_auth
+try:
+	from .utility import AuthMixin, url_with_auth
+	from .auth import api_auth
+except:
+	pass
