@@ -1,10 +1,13 @@
 import uuid
 import re
 import cPickle
+import pprint
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import m2m_changed, pre_delete
+from django.dispatch import receiver
 
 
 class APITree(object):
@@ -19,9 +22,8 @@ class APITree(object):
                 p[pr] = (sre, {})
             p = p[pr][1]
 
-    # def pprint(self):
-    #     import pprint
-    #     pprint.pprint(self._tree)
+    def pprint(self):
+        pprint.pprint(self._tree)
 
     def match(self, url):
         path = url
@@ -49,7 +51,7 @@ class APIEntryPoint(models.Model):
     class Meta:
         verbose_name = "Entry point"
     name = models.CharField(max_length=100, unique=True)
-    pattern = models.CharField(max_length=100)  # cPickle.dumps(<compiled RE>)
+    pattern = models.CharField(max_length=300)  # cPickle.dumps(<compiled RE>)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -94,6 +96,7 @@ class APIKeys(models.Model):
         return None, None
 
 def _api_set_changed(sender, instance, action, **kwargs):
+    # removed/add an API from an API key
     tree = APITree()
     if action == "post_clear":
         instance.apitree = cPickle.dumps(tree)
@@ -106,3 +109,19 @@ def _api_set_changed(sender, instance, action, **kwargs):
         instance.save(update_fields=["apitree"])
 
 m2m_changed.connect(_api_set_changed, sender=APIKeys.apis.through)
+
+@receiver(pre_delete, sender=APIEntryPoint)
+def _api_entry_deleted(sender, instance, using, *args, **kwargs):
+    # when an api entry is deleted, 
+    # the entry will be removed automatically from api key
+    # but we need to refresh the apitree field which stores the data strucuture for fast-matching
+    for apikey in instance.apikeys_set.all():
+        tree = APITree()
+
+        for api in apikey.apis.all():
+            if api.id == instance.id:
+                continue
+            srelist = cPickle.loads(api.pattern.encode("ascii"))
+            tree.add(srelist)
+        apikey.apitree = cPickle.dumps(tree)
+        apikey.save(update_fields=["apitree"])
